@@ -34,7 +34,7 @@ class NumParser:
         return pos_list[:-1]
 
     def chunking_num(self, lemma):
-        pattern = r'((NUMR)?(NUMR)?(NOUN)?(NUMR)?(NUMR)?(NUMR)|(ADJF))+'
+        pattern = r'((NUMR)?(NUMR)?(NOUN)?(NUMR)?(NUMR)?(NUMR)|(ADJF))+(NOUN)?'
         pos_tag = self.get_pos_tags(self.get_morph(lemma))
         match = re.search(pattern, "".join(pos_tag))
         if match is not None:
@@ -47,7 +47,7 @@ class NumParser:
         word_num = None
         lemma = parser.get_lemma(text)
         pos_list = self.get_pos_tags(self.get_morph(lemma))
-        print(pos_list)
+        print(lemma)
         if 'NUMR' in pos_list:
             word_num = parser.chunking_num(lemma)
             num = get_num(word_num)
