@@ -1,7 +1,4 @@
 from num_dict import nums, rank
-#from parser import NumParser
-
-#parser = NumParser()
 
 
 def get_numr(lemma):
@@ -68,6 +65,22 @@ def test_1000_999999():
                 print('{} = {}'.format(num, word_num[1]))
 
 
+def test_1000000_999999999():
+    with open('numbers_1000000_999999999.txt', 'r') as f:
+        for line in f:
+            word_num = line[:-1].split(',')
+            num = get_numr(parser.get_lemma(word_num[1]))
+            if int(word_num[0]) != num:
+                raise ValueError('{} != {}'.format(num, word_num[1]))
+            else:
+                print('{} = {}'.format(num, word_num[1]))
+
+
 if __name__ == '__main__':
-    # test_999()
+    from parser import NumParser
+
+    parser = NumParser()
+    
+    test_999()
     test_1000_999999()
+    test_1000000_999999999()

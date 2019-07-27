@@ -76,20 +76,5 @@ if __name__ == "__main__":
             print(line[:-1])
             print(parser.find_num(line))
 
-    print(get_numr(['сотня', 'миллион']))
-    """
-                for p in morph_token:
-                    if 'NUMR' in p.tag:
-                        print('norm_form: {}'.format(p.normal_form))
-                    break
-                """
-    """
-            sentence = mystem.lemmatize(line)[:-1]
-            for token in sentence:
-                for p in morph.parse(token):
-                    if 'NUMR' in p.tag:
-                        print('norm_form: {}'.format(p.normal_form))
-                    break
-            """
 
 
