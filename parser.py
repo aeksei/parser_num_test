@@ -2,7 +2,7 @@ import ssl
 import re
 import pymorphy2
 from pymystem3 import Mystem
-from word2num import get_num
+from word2num import get_numr, get_numb
 from num_dict import rank
 
 try:
@@ -33,7 +33,7 @@ class NumParser:
             pos_list.append(str(pos))
         return pos_list[:-1]
 
-    def chunking_num(self, lemma):
+    def chunking_numr(self, lemma):
         pattern = r'((NUMR)?(NUMR)?(NOUN)?(NUMR)?(NUMR)?(NUMR)|(ADJF))+(NOUN)?'
         pos_tag = self.get_pos_tags(self.get_morph(lemma))
         match = re.search(pattern, "".join(pos_tag))
@@ -44,23 +44,26 @@ class NumParser:
 
     def find_num(self, text):
         num = None
-        word_num = None
         lemma = parser.get_lemma(text)
         pos_list = self.get_pos_tags(self.get_morph(lemma))
-        print(lemma)
         if 'NUMR' in pos_list:
-            word_num = parser.chunking_num(lemma)
-            num = get_num(word_num)
+            # word_num = parser.chunking_numr()
+            num = get_numr(lemma)
         elif 'NUMB' in pos_list:
-            word_num = lemma[pos_list.index('NUMB')].replace(',', '.')
-            num = float(word_num)
-            for r in rank:
-                if r in lemma:
-                    num = num * rank[r][0]
+            lemma[pos_list.index('NUMB')] = float(lemma[pos_list.index('NUMB')].replace(',', '.'))
+            num = get_numb(lemma[pos_list.index('NUMB'):])
+        else:
+            replace = False
+            for i, l in enumerate(lemma):
+                if lemma[i] in rank:
+                    replace = True
+                    lemma[i] = rank[lemma[i]][0]
+                    pos_list[i] = 'NUMB'
                     break
-            num = int(num)
+            if replace:
+                num = get_numb(lemma[pos_list.index('NUMB'):])
 
-        return word_num, num
+        return num
 
 
 if __name__ == "__main__":
@@ -72,13 +75,15 @@ if __name__ == "__main__":
             # TODO clear punct and stop words and space
             print(line[:-1])
             print(parser.find_num(line))
-            """
+
+    print(get_numr(['сотня', 'миллион']))
+    """
                 for p in morph_token:
                     if 'NUMR' in p.tag:
                         print('norm_form: {}'.format(p.normal_form))
                     break
                 """
-            """
+    """
             sentence = mystem.lemmatize(line)[:-1]
             for token in sentence:
                 for p in morph.parse(token):
