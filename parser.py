@@ -3,6 +3,7 @@ import re
 import pymorphy2
 from pymystem3 import Mystem
 from word2num import get_num
+from num_dict import rank
 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -18,10 +19,10 @@ class NumParser:
         self.morph = pymorphy2.MorphAnalyzer()
 
     def get_lemma(self, text):
-        return self.mystem.lemmatize(text)
+        return [l for l in self.mystem.lemmatize(text) if l != ' ']
 
     def get_morph(self, lemma):
-        return [self.morph.parse(token) for token in lemma if token != ' ']
+        return [self.morph.parse(token) for token in lemma]
 
     def get_pos_tags(self, morph):
         pos_list = []
@@ -29,11 +30,10 @@ class NumParser:
             pos = morph_token[0].tag.POS
             if pos is None:
                 pos = str(morph_token[0].tag)[:4]
-            pos_list.append(pos)
+            pos_list.append(str(pos))
         return pos_list[:-1]
 
     def chunking_num(self, lemma):
-        lemma = [l for l in lemma if l != ' ']
         pattern = r'((NUMR)?(NUMR)?(NOUN)?(NUMR)?(NUMR)?(NUMR)|(ADJF))+'
         pos_tag = self.get_pos_tags(self.get_morph(lemma))
         match = re.search(pattern, "".join(pos_tag))
@@ -43,10 +43,23 @@ class NumParser:
             return []
 
     def find_num(self, text):
-        lemma = parser.get_lemma(text)
         num = None
-        word_num = parser.chunking_num(lemma)
-        num = get_num(word_num)
+        word_num = None
+        lemma = parser.get_lemma(text)
+        pos_list = self.get_pos_tags(self.get_morph(lemma))
+        print(pos_list)
+        if 'NUMR' in pos_list:
+            word_num = parser.chunking_num(lemma)
+            num = get_num(word_num)
+        elif 'NUMB' in pos_list:
+            word_num = lemma[pos_list.index('NUMB')].replace(',', '.')
+            num = float(word_num)
+            for r in rank:
+                if r in lemma:
+                    num = num * rank[r][0]
+                    break
+            num = int(num)
+
         return word_num, num
 
 
