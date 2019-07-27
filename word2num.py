@@ -1,7 +1,7 @@
 from num_dict import nums, rank
-from parser import NumParser
+#from parser import NumParser
 
-parser = NumParser()
+#parser = NumParser()
 
 
 def get_num(word_num):
@@ -28,7 +28,11 @@ def get_num(word_num):
             local_num += nums[word][0]
 
     global_num += local_num
-    return global_num
+
+    if global_num != 0:
+        return global_num
+    else:
+        return None
 
 
 def test_999():
