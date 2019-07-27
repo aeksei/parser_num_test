@@ -1,6 +1,9 @@
 import nltk
 import ssl
+import pymorphy2
 from pymystem3 import Mystem
+
+from num_dict import nums
 
 
 try:
@@ -10,11 +13,21 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-nltk.download('punkt')
 nltk.download("stopwords")
 
+
 # Create lemmatizer and stopwords list
-mystem = Mystem()
+
+
+
+class NumParser:
+    def __init__(self):
+        self.mystem = Mystem()
+        self.morph = pymorphy2.MorphAnalyzer()
+
+    def get_lemma(self, text):
+        return self.mystem.lemmatize(text)
+
 
 if __name__ == "__main__":
     file = 'text.txt'
@@ -23,7 +36,9 @@ if __name__ == "__main__":
             # TODO clear punct and stop words and space
             sentence = mystem.lemmatize(line)[:-1]
             for token in sentence:
-                analysis = mystem.analyze(token)[0].get('analysis')
-                if analysis and analysis is not None:
-                    if 'NUM' in analysis[0].get('gr'):
-                        print(token)
+                for p in morph.parse(token):
+                    if 'NUMR' in p.tag:
+                        print('norm_form: {}'.format(p.normal_form))
+                    break
+
+    print(len(nums))
