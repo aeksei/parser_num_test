@@ -46,24 +46,21 @@ class NumParser:
         num = None
         lemma = self.get_lemma(text)
         pos_list = self.get_pos_tags(self.get_morph(lemma))
-        if 'NUMB' in pos_list:
-            lemma[pos_list.index('NUMB')] = lemma[pos_list.index('NUMB')].replace(',', '.')
-            num = get_numb(lemma[pos_list.index('NUMB'):])
-        else:
-            num = get_numr(lemma)
+        try:
+            if 'NUMB' in pos_list:
+                lemma[pos_list.index('NUMB')] = lemma[pos_list.index('NUMB')].replace(',', '.')
+                num = get_numb(lemma[pos_list.index('NUMB'):])
+            else:
+                num = get_numr(lemma)
+        except ValueError as e:
+            print(e)
 
         return num
 
 
 if __name__ == "__main__":
     parser = NumParser()
-    parser.find_num('пятого десятка')
-
-    file = 'text.txt'
-    with open(file, 'r') as f:
-        for line in f:
-            print(line[:-1])
-            print(parser.find_num(line))
+    print(parser.find_num('двадцать три хвоинки'))
 
 
 
