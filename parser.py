@@ -1,16 +1,7 @@
-import ssl
 import re
 import pymorphy2
 from pymystem3 import Mystem
 from word2num import get_numr, get_numb
-from num_dict import rank
-
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
 
 
 class NumParser:
