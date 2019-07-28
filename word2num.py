@@ -24,14 +24,14 @@ def get_numr(lemma):
             local_level = None
             last_global_level = True
 
-        if word in nums:
+        elif word in nums:
             if (local_level is not None) and (local_level < nums[word][1]):
                 raise ValueError('local_level < {}'.format(nums[word][1]))
             local_level = nums[word][1]
             local_num += nums[word][0]
             last_global_level = False
 
-        if word in ordinal:
+        elif word in ordinal:
             if (local_level is not None) and (local_level < ordinal[word][1]):
                 raise ValueError('local_level < {}'.format(nums[word][1]))
             local_level = ordinal[word][1]
@@ -40,7 +40,10 @@ def get_numr(lemma):
 
     global_num += local_num
 
-    return global_num
+    if global_num == 0:
+        return None
+
+    return int(global_num)
 
 
 def get_numb(lemma):
