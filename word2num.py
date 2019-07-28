@@ -1,6 +1,17 @@
 from num_dict import nums, rank, ordinal
 
 
+def is_digit(string):
+    if string.isdigit():
+       return True
+    else:
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False
+
+
 def get_numr(lemma):
     local_num = 0
     global_num = 0
@@ -47,12 +58,23 @@ def get_numr(lemma):
 
 
 def get_numb(lemma):
-    num = float(lemma.pop(0))
-    for r in rank:
-        if r in lemma:
-            num *= rank[r][0]
-            break
-    return int(num)
+    local_num = 0
+    global_num = 0
+    global_level = 1
+    for word in lemma:
+        if word in rank:
+            if (global_level is not None) and (global_level < rank[word][1]):
+                raise ValueError('global_level < {}'.format(rank[word][1]))
+            global_level = rank[word][1]
+            global_num += local_num * rank[word][0]
+            local_num = 0
+
+        elif is_digit(word):
+            local_num *= global_level
+            local_num += float(word)
+            global_level *= 1000
+
+    return int(global_num + local_num)
 
 
 def test_999():

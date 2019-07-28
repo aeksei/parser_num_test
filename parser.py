@@ -46,29 +46,18 @@ class NumParser:
         num = None
         lemma = self.get_lemma(text)
         pos_list = self.get_pos_tags(self.get_morph(lemma))
-        if 'NUMR' in pos_list:
-            # word_num = parser.chunking_numr()
-            num = get_numr(lemma)
-        elif 'NUMB' in pos_list:
-            lemma[pos_list.index('NUMB')] = float(lemma[pos_list.index('NUMB')].replace(',', '.'))
+        if 'NUMB' in pos_list:
+            lemma[pos_list.index('NUMB')] = lemma[pos_list.index('NUMB')].replace(',', '.')
             num = get_numb(lemma[pos_list.index('NUMB'):])
         else:
-            replace = False
-            for i, l in enumerate(lemma):
-                if lemma[i] in rank:
-                    replace = True
-                    lemma[i] = rank[lemma[i]][0]
-                    pos_list[i] = 'NUMB'
-                    break
-            if replace:
-                num = get_numb(lemma[pos_list.index('NUMB'):])
+            num = get_numr(lemma)
 
         return num
 
 
 if __name__ == "__main__":
     parser = NumParser()
-    parser.find_num('первый')
+    parser.find_num('пятого десятка')
 
     file = 'text.txt'
     with open(file, 'r') as f:
