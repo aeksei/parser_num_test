@@ -1,4 +1,4 @@
-from num_dict import nums, rank
+from num_dict import nums, rank, ordinal
 
 
 def get_numr(lemma):
@@ -29,6 +29,13 @@ def get_numr(lemma):
                 raise ValueError('local_level < {}'.format(nums[word][1]))
             local_level = nums[word][1]
             local_num += nums[word][0]
+            last_global_level = False
+
+        if word in ordinal:
+            if (local_level is not None) and (local_level < ordinal[word][1]):
+                raise ValueError('local_level < {}'.format(nums[word][1]))
+            local_level = ordinal[word][1]
+            local_num += ordinal[word][0]
             last_global_level = False
 
     global_num += local_num
@@ -80,7 +87,7 @@ if __name__ == '__main__':
     from parser import NumParser
 
     parser = NumParser()
-    
+
     test_999()
     test_1000_999999()
     test_1000000_999999999()

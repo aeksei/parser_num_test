@@ -44,7 +44,7 @@ class NumParser:
 
     def find_num(self, text):
         num = None
-        lemma = parser.get_lemma(text)
+        lemma = self.get_lemma(text)
         pos_list = self.get_pos_tags(self.get_morph(lemma))
         if 'NUMR' in pos_list:
             # word_num = parser.chunking_numr()
@@ -68,11 +68,11 @@ class NumParser:
 
 if __name__ == "__main__":
     parser = NumParser()
+    parser.find_num('первый')
 
     file = 'text.txt'
     with open(file, 'r') as f:
         for line in f:
-            # TODO clear punct and stop words and space
             print(line[:-1])
             print(parser.find_num(line))
 
